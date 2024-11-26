@@ -1,0 +1,24 @@
+install.packages(c("ggplot2", "dplyr", "caTools"))
+
+# Load libraries
+library(ggplot2)
+library(dplyr)
+
+# Load the dataset
+data <- read.csv("train.csv")
+
+# View the first few rows
+head(data)
+
+# Check for missing values
+colSums(is.na(data))
+
+# Summary statistics
+summary(data)
+
+# Visualize the target variable distribution
+ggplot(data, aes(x = SalePrice)) +
+  geom_histogram(binwidth = 10000, fill = "blue", color = "black", alpha = 0.7) +
+  ggtitle("Distribution of SalePrice") +
+  xlab("SalePrice") +
+  ylab("Count")
