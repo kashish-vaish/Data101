@@ -1,0 +1,10 @@
+Package: HypothesisTesting
+Type: Package
+Title: Contains Functionalities To Perform Hypothesis Testing
+Version: 0.2.1
+Author: Kashish Vaish
+Maintainer: Kashish Vaish <kashishvaish@gmail.com>
+Description: This library is used to conduct permuation tests, z tests for hypothesis testing
+License: Open Source
+Encoding: UTF-8
+LazyData: true
