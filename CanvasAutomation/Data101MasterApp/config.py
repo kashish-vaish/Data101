@@ -1,7 +1,5 @@
-key="6948~yK4y7yFxGmaxy6eMDU9Jrc63hrvhxavycX8Jak74UmhznWh24WZCVZZcPTJuKueH"
-qualtricskey="UhUDuY6MucCUS7iWFHho841qA7Bb74TC66e3sj2C"
+key=<your canvas key>
+qualtricskey=<your qualtrics key>
 qualtricsurl="https://rutgers.yul1.qualtrics.com/API/v3"
 qualtricsdatacenter="yul1"
 sheetid="1c8iSIM54fviUWxR_cXT8APoeYtoLZxPFzRVPRAGjsfY"
-# clientid="90bfea5b50fce2320871e7d03c7dfca7"
-# clientsecret="ieMjHRArWxy8hIbZMAux4J55STzcmP1KDDlp7yZXkD5NvuLar1KPSwrN0FiMFI2n"
