@@ -12,7 +12,7 @@ def home():
 @app.route("/attendance", methods=["GET", "POST"])
 def attendance():
     date_filter = request.values.get("date", "")
-    selected_uid = request.values.get("uid", "").strip()
+    selected_netid = request.values.get("netid", "").strip()
     current_page = int(request.args.get("page", 1))
     page_size = 20
     table = []
@@ -28,9 +28,9 @@ def attendance():
             except Exception as e:
                 return f"<h3>Error loading attendance data: {e}</h3>"
 
-        #  Filter by UID if provided
-        if selected_uid:
-            table = [row for row in table if row.get("uid", "").lower() == selected_uid.lower()]
+        #  Filter by NetID if provided
+        if selected_netid:
+            table = [row for row in table if row.get("NetId", "").lower() == selected_netid.lower()]
 
     total_pages = (len(table) + page_size - 1) // page_size
     start = (current_page - 1) * page_size
@@ -40,7 +40,7 @@ def attendance():
         "attendance.html",
         table=table,
         selected_date=date_filter,
-        selected_uid=selected_uid,
+        selected_netid=selected_netid,
         current_page=current_page,
         total_pages=total_pages,
         start=start,

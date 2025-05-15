@@ -37,8 +37,10 @@ def fetch_qualtrics_attendance(date_filter):
         if survey["name"] == "S25-Data101-Attendance":
             survey_id = survey["id"]
 
-    start = f"{date_filter}T00:00:00Z"
-    end = f"{date_filter}T23:59:59Z"
+    start = f"{date_filter}T00:00:00-06:00"
+    end = f"{date_filter}T23:59:59-06:00"
+
+
     export_payload = {
         "format": "csv",
         "startDate": start,
@@ -50,8 +52,10 @@ def fetch_qualtrics_attendance(date_filter):
         json=export_payload,
         headers=headers
     )
+    print(start_resp.json())
 
     progress_id = start_resp.json()["result"]["progressId"]
+    
 
     while True:
         check_resp = requests.get(
@@ -71,6 +75,11 @@ def fetch_qualtrics_attendance(date_filter):
         headers=headers
     )
 
+    # with open(f"qualtrics_raw_{date_filter}.zip", "wb") as f:
+    #     f.write(file_resp.content)
+    #     print(f"Raw Qualtrics ZIP saved as qualtrics_raw_{date_filter}.zip")
+
+
     with zipfile.ZipFile(io.BytesIO(file_resp.content)) as z:
         with z.open(z.namelist()[0]) as f:
             df = pd.read_csv(f, encoding="ISO-8859-1")
@@ -83,24 +92,36 @@ def get_attendance_status(date_filter):
     df = fetch_qualtrics_attendance(date_filter)
 
     data = df[["uid", "StartDate", "EndDate", "Longt", "Lati"]].copy()
-    data["StartDate"] = pd.to_datetime(data["StartDate"], errors="coerce") + timedelta(hours=2)
-    data["EndDate"] = pd.to_datetime(data["EndDate"], errors="coerce") + timedelta(hours=2)
+    print(data.loc[((data["uid"] == "bd477")), ["uid", "StartDate", "EndDate"]])
+    data["StartDate"] = pd.to_datetime(data["StartDate"], errors="coerce") - timedelta(hours=4)
+    data["EndDate"] = pd.to_datetime(data["EndDate"], errors="coerce") - timedelta(hours=4)
     data["Longt"] = pd.to_numeric(data["Longt"], errors="coerce")
     data["Lati"] = pd.to_numeric(data["Lati"], errors="coerce")
 
     start_time, end_time = get_attendance_window(date_filter)
+    print(start_time)
+    print(end_time)
     if start_time and end_time:
+        print(data.loc[~((data["StartDate"] >= start_time) & (data["EndDate"] <= end_time)), ["uid", "StartDate", "EndDate"]])
+
         data = data[
             (data["StartDate"] >= start_time) &
             (data["EndDate"] <= end_time)
         ]
+        
 
     data = data.dropna(subset=["Longt", "Lati"])
 
-    studentlist_path = "C:\\Workspace\\Rutgers\\Sem3\\CS142_Data101_Sem3\\Spring 2025\\Logistics\\Attendance\\studentlist.csv"
+
+    gid = "0"
+    studentlist_path = f"https://docs.google.com/spreadsheets/d/{config.sheetid}/export?format=csv&gid={gid}"
+
+    
+    # studentlist_path = "C:\\Workspace\\Rutgers\\Sem3\\CS142_Data101_Sem3\\Spring 2025\\Logistics\\Attendance\\studentlist.csv"
     studentlist = pd.read_csv(studentlist_path)
 
-    studentlist["Attendance"] = studentlist["uid"].isin(data["uid"]).map({True: "Present", False: "Absent"})
+    studentlist["Attendance"] = studentlist["NetId"].isin(data["uid"]).map({True: "Present", False: "Absent"})
+    studentlist["UID"] = studentlist['UID'].fillna(0).astype(int).astype(str)
     return studentlist
 
 
