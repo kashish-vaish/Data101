@@ -1,1 +1,4 @@
 exportPattern("^[[:alpha:]]+")
+export(z_test_from_data)
+export(z_test_from_agg)
+export(permutation_test)
